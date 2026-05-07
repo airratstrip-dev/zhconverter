@@ -3,6 +3,7 @@ import path from 'path';
 import { TxtStrategy } from './TxtStrategy.js';
 import { SrtStrategy } from './SrtStrategy.js';
 import { JsonStrategy } from './JsonStrategy.js';
+import { XmlHtmlStrategy } from './XmlHtmlStrategy.js';
 
 export interface ConverterOptions {
     converter?: string;
@@ -14,9 +15,9 @@ export interface ConverterOptions {
 export class StrategyFactory {
     public static getStrategy(filePath: string) {
         if (!filePath) throw new Error('無效的檔案路徑');
-        
+
         const ext = path.extname(filePath).toLowerCase();
-        
+
         switch (ext) {
         case '.md':
         case '.log':
@@ -27,6 +28,11 @@ export class StrategyFactory {
         case '.json':
         case '.jsonl':
             return JsonStrategy;
+        case '.xml':
+        case '.html':
+        case '.htm':
+        case '.xhtml':
+            return XmlHtmlStrategy;
         default:
             throw new Error(`目前尚未支援此檔案格式: ${ext}`);
         }

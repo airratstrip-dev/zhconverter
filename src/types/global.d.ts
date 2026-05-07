@@ -6,7 +6,12 @@ export interface JsonFormatOptions {
     convertValues: boolean;
 }
 
-export type FormatOptions = JsonFormatOptions; 
+export interface XmlHtmlFormatOptions {
+    convertText: boolean;
+    convertAttributes: boolean;
+}
+
+export type FormatOptions = JsonFormatOptions | XmlHtmlFormatOptions;
 
 export interface TaskState {
     id: string;
@@ -18,7 +23,7 @@ export interface TaskState {
     status: 'pending' | 'processing' | 'completed' | 'error';
     progress: number;
     errorMessage?: string;
-    formatOptions?: FormatOptions; 
+    formatOptions?: FormatOptions;
 }
 
 export interface TaskPayload {
@@ -27,7 +32,7 @@ export interface TaskPayload {
     displayName: string;
     saveDir: string;
     saveName: string;
-    formatOptions?: FormatOptions; 
+    formatOptions?: FormatOptions;
 }
 
 declare global {
@@ -38,15 +43,14 @@ declare global {
             selectDirectory: () => Promise<string | null>;
             checkDirectory: (dir: string) => Promise<boolean>;
             showWarning: (message: string) => Promise<void>;
-            
             showProgressWindow: () => Promise<void>;
             closeProgressWindow: () => Promise<void>;
             getQueueState: () => Promise<TaskState[]>;
             enqueueTask: (payload: TaskPayload) => Promise<string>;
             onQueueUpdated: (callback: (queue: TaskState[]) => void) => void;
-
             setTheme: (isDark: boolean) => Promise<void>;
             onThemeChanged: (callback: (isDark: boolean) => void) => void;
+            setThemeState: (isDark: boolean) => Promise<void>;
         };
     }
 }

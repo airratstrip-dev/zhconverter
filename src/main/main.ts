@@ -14,7 +14,7 @@ let progressWindow: BrowserWindow | null = null; // ★ 新增獨立進度視窗
 function createMainWindow(): void {
     mainWindow = new BrowserWindow({
         width: 1200,
-        height: 720,
+        height: 768,
         // 隱藏預設標題列，讓畫面更乾淨、更像原生 App
         autoHideMenuBar: true,
         titleBarStyle: 'default',

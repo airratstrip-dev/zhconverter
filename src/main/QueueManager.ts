@@ -105,7 +105,12 @@ export class QueueManager {
 
     private async resolveSavePath(dir: string, initialName: string): Promise<string> {
         let finalName = initialName || 'clipboard-converted.txt';
-        if (!finalName.endsWith('.txt')) finalName += '.txt';
+        
+        // ★ 修正邏輯：取得目前的副檔名，如果完全沒有副檔名才補上 .txt
+        const currentExt = path.extname(finalName);
+        if (!currentExt) {
+            finalName += '.txt';
+        }
 
         const ext = path.extname(finalName);
         const base = path.basename(finalName, ext);
@@ -137,6 +142,4 @@ export class QueueManager {
         if (!this.progressWindow || this.progressWindow.isDestroyed()) return;
         this.progressWindow.webContents.send('queue-updated', this.queue);
     }
-
-    
 }

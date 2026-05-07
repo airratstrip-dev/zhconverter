@@ -1,0 +1,35 @@
+{
+    "name": "zhconverter",
+    "version": "0.0.0",
+    "description": "Universal Chinese Converter built with Electron",
+    "license": "MIT",
+    "author": "Airratstrip",
+    "type": "module",
+    "main": "dist-electron/main/main.js",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build && electron-builder",
+        "preview": "vite preview",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix"
+    },
+    "dependencies": {
+        "@material/material-color-utilities": "^0.4.0",
+        "@material/web": "^2.4.1",
+        "lit": "^3.3.2",
+        "material-symbols": "^0.44.4"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "electron": "^41.5.0",
+        "electron-builder": "^26.8.1",
+        "esbuild": "^0.28.0",
+        "eslint": "^10.3.0",
+        "globals": "^17.6.0",
+        "typescript": "^5.2.2",
+        "typescript-eslint": "^8.59.2",
+        "vite": "^8.0.10",
+        "vite-plugin-electron": "^0.28.6",
+        "vite-plugin-electron-renderer": "^0.14.7"
+    }
+}

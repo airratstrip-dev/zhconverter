@@ -1,0 +1,4 @@
+{"id": 1, "task_type": "逻辑推理", "conversation": [{"role": "user", "content": "小明有3个苹果，小红比小明多5个，他们一共有多少个？"}, {"role": "assistant", "content": "首先，小明有3个苹果。根据题意，小红有 3 + 5 = 8 个苹果。所以两人总共有 3 + 8 = 11 个苹果。"}]}
+{"id": 2, "task_type": "代码生成", "conversation": [{"role": "user", "content": "用 Python 写一个快速排序算法"}, {"role": "assistant", "content": "没问题，这是经典的快排实现：\n\n```python\ndef quick_sort(arr):\n    if len(arr) <= 1: return arr\n    pivot = arr[len(arr) // 2]\n    ...\n```"}]}
+{"id": 3, "task_type": "文本摘要", "conversation": [{"role": "user", "content": "总结这段新闻：今日 A 股三大股指集体走高，创业板指涨超 2%，半导体板块爆发。"}, {"role": "assistant", "content": "今日 A 股行情向好，三大股指全线上涨，半导体板块表现亮眼，创业板指领涨且涨幅超过 2%。"}]}
+{"id": 4, "task_type": "创意写作", "conversation": [{"role": "user", "content": "帮我写一段直播带货的开场白"}, {"role": "assistant", "content": "欢迎新进直播间的家人们！点点关注不迷路。今天给大家带来的这款产品是咱们自家的爆款，价格直接打到地板价，库存不多，先到先得！"}]}

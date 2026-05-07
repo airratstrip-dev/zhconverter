@@ -1,0 +1,48 @@
+{
+    "code": 200,
+    "msg": "查询成功",
+    "data": {
+        "goods_id": "SPU_100029384",
+        "goods_name": "华为 Mate 70 Pro+ 曜金黑",
+        "category": [
+            "手机",
+            "数码",
+            "国产之光"
+        ],
+        "specifications": [
+            {
+                "spec_name": "内存版本",
+                "options": [
+                    "16GB+512GB",
+                    "16GB+1TB"
+                ]
+            },
+            {
+                "spec_name": "配送方式",
+                "options": [
+                    "顺丰包邮",
+                    "京东物流",
+                    "门店自提"
+                ]
+            }
+        ],
+        "price_info": {
+            "original_price": 8999.00,
+            "flash_sale_price": 8499.00,
+            "currency": "CNY"
+        },
+        "is_in_stock": true,
+        "user_reviews": [
+            {
+                "username": "技术大拿",
+                "rating": 5,
+                "comment": "遥遥领先，国产芯片确实给力，系统丝滑。"
+            },
+            {
+                "username": "数码小胖",
+                "rating": 4,
+                "comment": "拍照很强，就是抢购太难了，建议增加库存。"
+            }
+        ]
+    }
+}

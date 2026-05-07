@@ -33,6 +33,12 @@ export class ZhConverterApp extends LitElement {
             z-index: 1000;
         }
 
+        md-filled-text-field {
+            flex-grow: 1;
+            --md-filled-text-field-container-shape: 12px;
+            --md-filled-text-field-container-color: var(--md-sys-color-background);
+        }
+
         .sidebar {
             width: 260px;
             background-color: var(--md-sys-color-surface-container-low);

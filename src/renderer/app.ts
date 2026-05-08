@@ -31,12 +31,14 @@ export class ZhConverterApp extends LitElement {
 
     @state() private xmlHtmlOptions: XmlHtmlFormatOptions = {
         convertText: true,
-        convertAttributes: false
+        convertAttributes: false,
+        convertComments: true
     };
 
     @state() private yamlOptions: YamlFormatOptions = {
         convertKeys: false,
-        convertValues: true
+        convertValues: true,
+        convertComments: true
     };
 
     public async connectedCallback(): Promise<void> {
@@ -232,6 +234,13 @@ export class ZhConverterApp extends LitElement {
                                             ></md-checkbox>
                                             轉換標籤屬性 (alt, title...)
                                         </label>
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.xmlHtmlOptions.convertComments}"
+                                                @change="${(e: Event) => this.xmlHtmlOptions = { ...this.xmlHtmlOptions, convertComments: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換註解 (&lt;!-- ... --&gt;)
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -263,6 +272,13 @@ export class ZhConverterApp extends LitElement {
                                                 @change="${(e: Event) => this.yamlOptions = { ...this.yamlOptions, convertValues: (e.target as HTMLInputElement).checked }}"
                                             ></md-checkbox>
                                             轉換數值 (Values)
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.yamlOptions.convertComments}"
+                                                @change="${(e: Event) => this.yamlOptions = { ...this.yamlOptions, convertComments: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換註解 (# ...)
                                         </label>
                                     </div>
                                 </div>

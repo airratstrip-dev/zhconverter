@@ -9,11 +9,13 @@ export interface JsonFormatOptions {
 export interface XmlHtmlFormatOptions {
     convertText: boolean;
     convertAttributes: boolean;
+    convertComments: boolean;
 }
 
 export interface YamlFormatOptions {
     convertKeys: boolean;
     convertValues: boolean;
+    convertComments: boolean;
 }
 
 export type FormatOptions = JsonFormatOptions | XmlHtmlFormatOptions | YamlFormatOptions;

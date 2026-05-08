@@ -1,7 +1,7 @@
 // src/main/strategies/XmlHtmlStrategy.ts
 import fs from 'fs/promises';
 import * as cheerio from 'cheerio';
-import type { Element, Text } from 'domhandler';
+import type { Element, Text, Comment, AnyNode } from 'domhandler';
 import ZhConverter from '../../lib/ZhConverter';
 import { ConverterOptions } from './StrategyFactory.js';
 import type { XmlHtmlFormatOptions } from '../../types/global.js';
@@ -9,8 +9,8 @@ import type { XmlHtmlFormatOptions } from '../../types/global.js';
 export interface XmlHtmlConverterOptions extends ConverterOptions, Partial<XmlHtmlFormatOptions> {}
 
 interface TextRef {
-    type: 'text' | 'attr';
-    node: Element | Text;
+    type: 'text' | 'attr' | 'comment';
+    node: Element | Text | Comment;
     attrName?: string;
     originalValue: string;
 }
@@ -27,6 +27,7 @@ export class XmlHtmlStrategy {
 
         const convertText = options.convertText ?? true;
         const convertAttributes = options.convertAttributes ?? false;
+        const convertComments = options.convertComments ?? true;
 
         let rawContent = '';
         try {
@@ -38,7 +39,6 @@ export class XmlHtmlStrategy {
 
         const isXml = filePath.toLowerCase().endsWith('.xml') || filePath.toLowerCase().endsWith('.xhtml');
         
-        // 移除 decodeEntities，直接載入
         const $ = cheerio.load(rawContent, { xmlMode: isXml });
         const refs: TextRef[] = [];
 
@@ -52,7 +52,6 @@ export class XmlHtmlStrategy {
             });
         };
 
-        // 走訪並處理屬性 (需確保節點是 Element)
         $('*').each((_, element) => {
             if (element.type === 'tag' || element.type === 'script' || element.type === 'style') {
                 const el = element as Element;
@@ -67,16 +66,23 @@ export class XmlHtmlStrategy {
             }
         });
 
-        // 走訪並處理純文本節點
-        if (convertText) {
-            $('*').contents().each((_, node) => {
-                if (node.type === 'text') {
+        const processContents = (nodes: cheerio.Cheerio<AnyNode>) => {
+            nodes.each((_, node) => {
+                if (convertText && node.type === 'text') {
                     const textNode = node as Text;
                     const text = textNode.data.trim();
                     if (text) refs.push({ type: 'text', node: textNode, originalValue: textNode.data });
                 }
+                else if (convertComments && node.type === 'comment') {
+                    const commentNode = node as Comment;
+                    const text = commentNode.data.trim();
+                    if (text) refs.push({ type: 'comment', node: commentNode, originalValue: commentNode.data });
+                }
             });
-        }
+        };
+
+        processContents($.root().contents());
+        processContents($('*').contents());
 
         if (refs.length === 0) return isXml ? $.xml() : $.html();
 
@@ -88,7 +94,7 @@ export class XmlHtmlStrategy {
             chunkSize: 4096,
             batchSize: options.batchSize || 4,
             jitter: [100, 500] as [number, number],
-            protect: options.protect ? new Set(options.protect) : new Set<string>(),
+            protect: options.protect ? new Set(options.protect) : new Set<string>()
         };
 
         const converter = new ZhConverter(textForConverter, converterOptions);
@@ -123,6 +129,9 @@ export class XmlHtmlStrategy {
             }
             else if (ref.type === 'attr' && ref.attrName) {
                 $(ref.node as Element).attr(ref.attrName, convertedValue);
+            }
+            else if (ref.type === 'comment') {
+                (ref.node as Comment).data = convertedValue;
             }
         });
 

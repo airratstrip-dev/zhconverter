@@ -1,3 +1,4 @@
+// vite.config.ts
 import { defineConfig } from 'vite';
 import path from 'node:path';
 import electron from 'vite-plugin-electron/simple';
@@ -21,7 +22,7 @@ export default defineConfig({
                     build: {
                         outDir: 'dist-electron/main',
                         rollupOptions: {
-                            external: ['cheerio']
+                            external: ['cheerio', 'yaml']
                         }
                     }
                 }

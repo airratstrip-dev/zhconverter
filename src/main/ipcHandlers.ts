@@ -1,10 +1,12 @@
 // src/main/ipcHandlers.ts
-import { ipcMain, systemPreferences, BrowserWindow, dialog } from 'electron';
+import { ipcMain, systemPreferences, BrowserWindow, dialog, nativeTheme } from 'electron';
 import fs from 'fs/promises';
 import crypto from 'crypto'; // 用於生成 Task ID
 import { QueueManager } from './QueueManager.js';
 import { showProgressWindow } from './main.js';
 import type { TaskPayload, TaskState } from '../types/global.js';
+
+let currentIsDarkMode: boolean = nativeTheme.shouldUseDarkColors;
 
 export function registerIpcHandlers(): void {
     ipcMain.handle('get-accent-color', () => {
@@ -42,6 +44,7 @@ export function registerIpcHandlers(): void {
             return false;
         }
     });
+    
     ipcMain.handle('show-progress-window', () => {
         showProgressWindow();
     });
@@ -69,7 +72,7 @@ export function registerIpcHandlers(): void {
             saveName: payload.saveName,
             status: 'pending',
             progress: 0,
-            formatOptions: payload.formatOptions // ★ 安全且嚴格地承接選項
+            formatOptions: payload.formatOptions
         };
 
         QueueManager.getInstance().addTask(task);
@@ -77,7 +80,12 @@ export function registerIpcHandlers(): void {
         return task.id;
     });
 
+    ipcMain.handle('get-theme', () => {
+        return currentIsDarkMode;
+    });
+
     ipcMain.handle('set-theme', (_, isDark: boolean) => {
+        currentIsDarkMode = isDark;
         const windows = BrowserWindow.getAllWindows();
         for (const win of windows) {
             if (win.isDestroyed()) continue;

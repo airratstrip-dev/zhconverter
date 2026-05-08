@@ -82,6 +82,7 @@ declare global {
             getQueueState: () => Promise<TaskState[]>;
             enqueueTask: (payload: TaskPayload) => Promise<string>;
             onQueueUpdated: (callback: (queue: TaskState[]) => void) => void;
+            getTheme: () => Promise<boolean>;
             setTheme: (isDark: boolean) => Promise<void>;
             onThemeChanged: (callback: (isDark: boolean) => void) => void;
         };

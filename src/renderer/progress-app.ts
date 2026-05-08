@@ -141,8 +141,16 @@ export class ZhProgressApp extends LitElement {
 
     public async connectedCallback(): Promise<void> {
         super.connectedCallback();
+        
+        // 先建立 Material Theme 所需的種子顏色基礎
         this.isDarkMode = await initializeDynamicTheme();
         
+        // 向主進程同步真實的當前主題狀態
+        if (window.api && window.api.getTheme) {
+            this.isDarkMode = await window.api.getTheme();
+            applyCurrentTheme(this.isDarkMode);
+        }
+
         if (window.api && window.api.getQueueState) {
             this.tasks = await window.api.getQueueState();
         }
@@ -216,12 +224,10 @@ export class ZhProgressApp extends LitElement {
                             ${this.renderStatus(task)}
                         </div>
                         
-                        <!-- 只有在處理中才顯示進度條 -->
                         ${task.status === 'processing' ? html`
                             <md-linear-progress value="${task.progress}"></md-linear-progress>
                         ` : ''}
                         
-                        <!-- 顯示錯誤訊息 -->
                         ${task.status === 'error' && task.errorMessage ? html`
                             <div style="font-size: 12px; color: var(--md-sys-color-error); margin-top: -4px;">
                                 ${task.errorMessage}

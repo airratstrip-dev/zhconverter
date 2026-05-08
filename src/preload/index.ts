@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld('api', {
         ipcRenderer.on('queue-updated', (_event, queue) => callback(queue));
     },
 
+    getTheme: () => ipcRenderer.invoke('get-theme'),
     setTheme: (isDark: boolean) => ipcRenderer.invoke('set-theme', isDark),
     onThemeChanged: (callback: (isDark: boolean) => void) => {
         ipcRenderer.removeAllListeners('theme-changed');

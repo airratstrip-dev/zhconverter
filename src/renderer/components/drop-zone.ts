@@ -45,7 +45,6 @@ export class DropZone extends LitElement {
         super.connectedCallback();
         window.addEventListener('paste', this.handlePaste);
         
-        // ★ 註冊真實檔案拖曳事件
         this.addEventListener('dragover', this.handleDragOver);
         this.addEventListener('dragleave', this.handleDragLeave);
         this.addEventListener('drop', this.handleDrop);
@@ -77,7 +76,6 @@ export class DropZone extends LitElement {
 
         const file = e.dataTransfer.files[0];
         
-        // 透過 preload 拿取真實路徑
         const filePath = window.api.getFilePath(file);
         if (!filePath) return;
 
@@ -91,12 +89,10 @@ export class DropZone extends LitElement {
 
 
     private handlePaste = (e: ClipboardEvent): void => {
-        // 衛句：沒有剪貼簿資料直接返回
         if (!e.clipboardData) return;
 
         const text = e.clipboardData.getData('text');
         
-        // 衛句：沒有文字直接返回
         if (!text) return;
 
         this.dispatchEvent(new FileReadyEvent({ type: 'clipboard', content: text }));
@@ -107,7 +103,7 @@ export class DropZone extends LitElement {
             <md-elevation></md-elevation>
             <md-icon>upload_file</md-icon>
             <h2>拖曳檔案至此，或按 Ctrl+V 貼上文字</h2>
-            <p>支援 .txt</p>
+            <p>支援 .txt, .md, .srt, .json, .jsonl, .xml, .html, .yaml, .toml, .ass</p>
         `;
     }
 }

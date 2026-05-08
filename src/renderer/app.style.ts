@@ -61,6 +61,7 @@ md-filled-text-field {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    overflow-y: auto;
 }
 
 .sidebar-title {

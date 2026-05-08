@@ -1,6 +1,6 @@
 // src/renderer/app.ts
 import 'material-symbols/outlined.css';
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import '@material/web/button/filled-button.js';
 import '@material/web/button/outlined-button.js';
@@ -10,251 +10,12 @@ import '@material/web/checkbox/checkbox.js';
 import './components/drop-zone.js';
 import { initializeDynamicTheme, applyCurrentTheme } from './utils/theme.js';
 import { FileReadyEvent, FileReadyDetail } from './events/FileReadyEvent.js';
-import type { TaskPayload, JsonFormatOptions, XmlHtmlFormatOptions, FormatOptions } from '../types/global.js';
+import type { TaskPayload, JsonFormatOptions, XmlHtmlFormatOptions, YamlFormatOptions, FormatOptions } from '../types/global.js';
+import { appStyles } from './app.style.js';
 
 @customElement('zh-converter-app')
 export class ZhConverterApp extends LitElement {
-    static styles = css`
-        :host {
-            display: flex;
-            width: 100vw;
-            height: 100vh;
-            background-color: var(--md-sys-color-surface);
-            color: var(--md-sys-color-on-surface);
-        }
-
-        .window-drag-area {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 32px;
-            -webkit-app-region: drag;
-            z-index: 1000;
-        }
-
-        md-filled-text-field {
-            flex-grow: 1;
-            --md-filled-text-field-container-shape: 12px;
-            --md-filled-text-field-container-color: var(--md-sys-color-background);
-        }
-
-        .sidebar {
-            width: 260px;
-            background-color: var(--md-sys-color-surface-container-low);
-            border-right: 1px solid var(--md-sys-color-outline-variant);
-            display: flex;
-            flex-direction: column;
-            padding: 48px 12px 16px 12px;
-            box-sizing: border-box;
-            z-index: 10;
-        }
-
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 32px;
-            padding-left: 8px;
-        }
-
-        .sidebar-header md-icon {
-            color: var(--md-sys-color-primary);
-            font-size: 28px;
-        }
-
-        .sidebar-header h2 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .sidebar-content {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        .sidebar-title {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--md-sys-color-on-surface-variant);
-            margin: 24px 0 12px 8px;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .sidebar-btn {
-            --md-outlined-button-container-shape: 12px;
-            width: 100%;
-        }
-
-        .main-area {
-            flex-grow: 1;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 32px;
-            overflow-y: auto;
-        }
-
-        .content-wrapper {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
-
-        .settings-section {
-            background-color: var(--md-sys-color-surface-container-lowest);
-            border-radius: 24px;
-            padding: 24px;
-            border: 1px solid var(--md-sys-color-outline-variant);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--md-sys-color-primary);
-            margin-bottom: 4px;
-        }
-
-        .path-selector-area {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-
-        .path-selector-area md-filled-text-field {
-            flex-grow: 1;
-        }
-
-        .format-settings-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding: 0 8px;
-        }
-
-        .format-panel {
-            background: var(--md-sys-color-surface-container-lowest);
-            border: 1px solid var(--md-sys-color-outline-variant);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .format-panel:hover {
-            border-color: var(--md-sys-color-outline);
-        }
-
-        .format-panel-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            cursor: pointer;
-            user-select: none;
-            background: transparent;
-            transition: background 0.2s ease;
-        }
-
-        .format-panel-header:hover {
-            background: var(--md-sys-color-surface-container-low);
-        }
-
-        .format-panel-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--md-sys-color-on-surface);
-        }
-
-        .format-panel-title md-icon {
-            font-size: 18px;
-        }
-
-        .expand-icon {
-            font-size: 20px;
-            color: var(--md-sys-color-on-surface-variant);
-            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
-        }
-
-        .expand-icon.expanded {
-            transform: rotate(180deg);
-        }
-
-        .expandable-panel {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.3s cubic-bezier(0.2, 0, 0, 1);
-        }
-
-        .expandable-panel.expanded {
-            grid-template-rows: 1fr;
-        }
-
-        .expandable-content {
-            min-height: 0; 
-        }
-
-        .expandable-content-inner {
-            padding: 0 16px 16px 16px; 
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: var(--md-sys-color-on-surface);
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .action-area {
-            display: flex;
-            justify-content: center;
-            margin-top: 8px;
-        }
-
-        .action-area md-filled-button {
-            --md-filled-button-container-shape: 16px;
-            min-width: 200px;
-            height: 56px;
-            font-size: 16px;
-        }
-
-        .animated-appear {
-            animation: slideUp 0.4s cubic-bezier(0.2, 0, 0, 1) forwards;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    `;
+    static styles = appStyles;
 
     @state() private currentFile: FileReadyDetail | null = null;
     @state() private saveDirectory: string = '';
@@ -273,28 +34,25 @@ export class ZhConverterApp extends LitElement {
         convertAttributes: false
     };
 
+    @state() private yamlOptions: YamlFormatOptions = {
+        convertKeys: false,
+        convertValues: true
+    };
+
     public async connectedCallback(): Promise<void> {
         super.connectedCallback();
         this.isDarkMode = await initializeDynamicTheme();
-        
-        if (window.api && window.api.onThemeChanged) {
-            window.api.onThemeChanged((isDark) => {
-                this.isDarkMode = isDark;
-                applyCurrentTheme(isDark);
-            });
-        }
     }
 
     private handleFileReady(e: Event): void {
         const event = e as FileReadyEvent;
-        if (!event.detail || !event.detail.content) {
-            return;
-        }
+        if (!event.detail || !event.detail.content) return;
         
         this.currentFile = event.detail;
 
         if (this.currentFile.type === 'file' && this.currentFile.name) {
-            const ext = this.currentFile.name.match(/\.[^.]+$/)?.[0].toLowerCase() || '';
+            const extMatch = this.currentFile.name.match(/\.[^.]+$/);
+            const ext = extMatch ? extMatch[0].toLowerCase() : '';
             const baseName = this.currentFile.name.replace(/\.[^.]+$/, '');
             this.saveFileName = `${baseName}-converted${ext}`;
 
@@ -305,10 +63,13 @@ export class ZhConverterApp extends LitElement {
             else if (['.xml', '.html', '.htm', '.xhtml'].includes(ext)) {
                 newSet.add('xmlhtml');
             }
+            else if (ext === '.yaml' || ext === '.yml') {
+                newSet.add('yaml');
+            }
             this.activeFormatPanels = newSet;
         }
         else {
-            this.saveFileName = ''; 
+            this.saveFileName = '';
         }
     }
 
@@ -325,15 +86,14 @@ export class ZhConverterApp extends LitElement {
 
     private async handleSelectDirectory(): Promise<void> {
         const selected = await window.api.selectDirectory();
-        if (!selected) {
-            return;
-        }
+        if (!selected) return;
         this.saveDirectory = selected;
     }
 
     private async toggleTheme(): Promise<void> {
         this.isDarkMode = !this.isDarkMode;
         applyCurrentTheme(this.isDarkMode);
+
         if (window.api && window.api.setTheme) {
             await window.api.setTheme(this.isDarkMode);
         }
@@ -354,14 +114,13 @@ export class ZhConverterApp extends LitElement {
                 const selected = await window.api.selectDirectory();
                 if (!selected) {
                     await window.api.showWarning('未選擇儲存路徑！任務已取消。');
-                    return; 
+                    return;
                 }
                 this.saveDirectory = selected;
             }
 
-            const extMatch = (this.currentFile.type === 'file' && this.currentFile.name)
-                ? this.currentFile.name.match(/\.[^.]+$/)
-                : null;
+            const fileName = this.currentFile.name || '';
+            const extMatch = fileName.match(/\.[^.]+$/);
             const ext = extMatch ? extMatch[0].toLowerCase() : '';
 
             let options: FormatOptions | undefined = undefined;
@@ -371,11 +130,14 @@ export class ZhConverterApp extends LitElement {
             else if (['.xml', '.html', '.htm', '.xhtml'].includes(ext)) {
                 options = { ...this.xmlHtmlOptions };
             }
+            else if (ext === '.yaml' || ext === '.yml') {
+                options = { ...this.yamlOptions };
+            }
 
             const payload: TaskPayload = {
                 type: this.currentFile.type,
                 contentOrPath: this.currentFile.type === 'file' ? this.currentFile.path! : this.currentFile.content,
-                displayName: this.currentFile.type === 'file' ? this.currentFile.name! : '剪貼簿文字',
+                displayName: this.currentFile.name! || '剪貼簿文字',
                 saveDir: this.saveDirectory,
                 saveName: this.saveFileName,
                 formatOptions: options
@@ -419,6 +181,7 @@ export class ZhConverterApp extends LitElement {
                                     expand_more
                                 </md-icon>
                             </div>
+                            
                             <div class="expandable-panel ${this.activeFormatPanels.has('json') ? 'expanded' : ''}">
                                 <div class="expandable-content">
                                     <div class="expandable-content-inner">
@@ -429,6 +192,7 @@ export class ZhConverterApp extends LitElement {
                                             ></md-checkbox>
                                             轉換鍵名 (Keys)
                                         </label>
+                                        
                                         <label class="checkbox-label">
                                             <md-checkbox
                                                 ?checked="${this.jsonOptions.convertValues}"
@@ -472,6 +236,39 @@ export class ZhConverterApp extends LitElement {
                                 </div>
                             </div>
                         </div>
+
+                        <div class="format-panel">
+                            <div class="format-panel-header" @click="${() => this.togglePanel('yaml')}">
+                                <div class="format-panel-title">
+                                    <md-icon>segment</md-icon>
+                                    YAML / YML
+                                </div>
+                                <md-icon class="expand-icon ${this.activeFormatPanels.has('yaml') ? 'expanded' : ''}">
+                                    expand_more
+                                </md-icon>
+                            </div>
+                            <div class="expandable-panel ${this.activeFormatPanels.has('yaml') ? 'expanded' : ''}">
+                                <div class="expandable-content">
+                                    <div class="expandable-content-inner">
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.yamlOptions.convertKeys}"
+                                                @change="${(e: Event) => this.yamlOptions = { ...this.yamlOptions, convertKeys: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換鍵名 (Keys)
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.yamlOptions.convertValues}"
+                                                @change="${(e: Event) => this.yamlOptions = { ...this.yamlOptions, convertValues: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換數值 (Values)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -480,10 +277,12 @@ export class ZhConverterApp extends LitElement {
                         <md-icon slot="icon">format_list_bulleted</md-icon>
                         任務佇列
                     </md-outlined-button>
+
                     <md-outlined-button class="sidebar-btn" @click="${this.toggleTheme}">
                         <md-icon slot="icon">${this.isDarkMode ? 'light_mode' : 'dark_mode'}</md-icon>
                         切換${this.isDarkMode ? '亮色' : '暗色'}主題
                     </md-outlined-button>
+                    
                     <md-outlined-button class="sidebar-btn" @click="${() => {}}">
                         <md-icon slot="icon">settings</md-icon>
                         應用程式設定
@@ -494,11 +293,13 @@ export class ZhConverterApp extends LitElement {
             <div class="main-area">
                 <div class="content-wrapper">
                     <drop-zone @file-ready="${this.handleFileReady}"></drop-zone>
+
                     <div class="settings-section">
                         <div class="section-title">
                             <md-icon>settings</md-icon>
                             輸出設定
                         </div>
+                        
                         <div class="path-selector-area">
                             <md-filled-text-field
                                 label="儲存資料夾"
@@ -507,10 +308,13 @@ export class ZhConverterApp extends LitElement {
                             >
                                 <md-icon slot="leading-icon">folder</md-icon>
                             </md-filled-text-field>
-                            <md-outlined-button @click="${this.handleSelectDirectory}">瀏覽</md-outlined-button>
+                            <md-outlined-button @click="${this.handleSelectDirectory}">
+                                瀏覽
+                            </md-outlined-button>
                         </div>
+                        
                         <md-filled-text-field
-                            label="檔案名稱"
+                            label="檔案名稱 (剪貼簿預設自動編號)"
                             value="${this.saveFileName}"
                             @input="${(e: Event) => this.saveFileName = (e.target as HTMLInputElement).value}"
                         >
@@ -520,7 +324,9 @@ export class ZhConverterApp extends LitElement {
 
                     ${this.currentFile ? html`
                         <div class="action-area animated-appear">
-                            <md-filled-button @click="${this.startConversion}" ?disabled="${this.isSubmitting}">
+                            <md-filled-button 
+                                @click="${this.startConversion}" 
+                                ?disabled="${this.isSubmitting}">
                                 <md-icon slot="icon">send</md-icon>
                                 ${this.isSubmitting ? '傳送中...' : `加入佇列 (${this.currentFile.type === 'file' ? this.currentFile.name : '剪貼簿'})`}
                             </md-filled-button>

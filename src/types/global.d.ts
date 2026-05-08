@@ -11,7 +11,12 @@ export interface XmlHtmlFormatOptions {
     convertAttributes: boolean;
 }
 
-export type FormatOptions = JsonFormatOptions | XmlHtmlFormatOptions;
+export interface YamlFormatOptions {
+    convertKeys: boolean;
+    convertValues: boolean;
+}
+
+export type FormatOptions = JsonFormatOptions | XmlHtmlFormatOptions | YamlFormatOptions;
 
 export interface TaskState {
     id: string;
@@ -50,7 +55,6 @@ declare global {
             onQueueUpdated: (callback: (queue: TaskState[]) => void) => void;
             setTheme: (isDark: boolean) => Promise<void>;
             onThemeChanged: (callback: (isDark: boolean) => void) => void;
-            setThemeState: (isDark: boolean) => Promise<void>;
         };
     }
 }

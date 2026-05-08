@@ -57,7 +57,6 @@ export class QueueManager {
         try {
             let resultText = '';
             
-            // ★ 將 formatOptions 嚴格地整合進 converter 選項中
             const strategyOptions = {
                 converter: 'Taiwan',
                 ...pendingTask.formatOptions
@@ -106,7 +105,6 @@ export class QueueManager {
     private async resolveSavePath(dir: string, initialName: string): Promise<string> {
         let finalName = initialName || 'clipboard-converted.txt';
         
-        // ★ 修正邏輯：取得目前的副檔名，如果完全沒有副檔名才補上 .txt
         const currentExt = path.extname(finalName);
         if (!currentExt) {
             finalName += '.txt';

@@ -4,6 +4,7 @@ import { TxtStrategy } from './TxtStrategy.js';
 import { SrtStrategy } from './SrtStrategy.js';
 import { JsonStrategy } from './JsonStrategy.js';
 import { XmlHtmlStrategy } from './XmlHtmlStrategy.js';
+import { YamlStrategy } from './YamlStrategy.js';
 
 export interface ConverterOptions {
     converter?: string;
@@ -33,6 +34,9 @@ export class StrategyFactory {
         case '.htm':
         case '.xhtml':
             return XmlHtmlStrategy;
+        case '.yaml':
+        case '.yml':
+            return YamlStrategy;
         default:
             throw new Error(`目前尚未支援此檔案格式: ${ext}`);
         }

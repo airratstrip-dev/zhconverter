@@ -18,7 +18,8 @@
         "@material/web": "^2.4.1",
         "cheerio": "^1.2.0",
         "lit": "^3.3.2",
-        "material-symbols": "^0.44.4"
+        "material-symbols": "^0.44.4",
+        "yaml": "^2.8.4"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

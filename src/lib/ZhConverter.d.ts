@@ -80,8 +80,7 @@ export interface ZhConvertOptions {
   diff?: ZhConvertDiffOptions;
   /** 啟用的模組陣列 (例如 ["ChineseVariant", "Computer"]) */
   useModel?: string[];
-  /** 
-   * 資料完整性檢查。
+  /** * 資料完整性檢查。
    * 若為 true，遇到無法重試的錯誤會立即停止；若為 false 則繼續執行並回報 missing。
    */
   integrity?: boolean;
@@ -104,14 +103,14 @@ export default class ZhConverter implements PromiseLike<string> {
    */
     then<TResult1 = string, TResult2 = never>(
     onfulfilled?: ((value: string) => TResult1 | PromiseLike<TResult1>) | undefined | null,
-    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null
+    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | undefined | null
   ): Promise<TResult1 | TResult2>;
 
     /**
    * 支援 Promise 的 .catch() 方法。
    */
     catch<TResult = never>(
-    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null
+    onrejected?: ((reason: unknown) => TResult | PromiseLike<TResult>) | undefined | null
   ): Promise<string | TResult>;
 
     /**

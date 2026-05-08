@@ -43,13 +43,16 @@ export class TomlStrategy {
             if (node instanceof Date) return;
 
             if (Array.isArray(node)) {
-                node.forEach(extractKnown);
+                node.forEach(item => {
+                    if (typeof item === 'string') knownValues.add(item);
+                    else extractKnown(item);
+                });
             }
             else if (typeof node === 'object') {
                 for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
                     knownKeys.add(k);
                     if (typeof v === 'string') knownValues.add(v);
-                    extractKnown(v);
+                    else extractKnown(v);
                 }
             }
         };
@@ -98,15 +101,12 @@ export class TomlStrategy {
 
             if (shouldConvert && rawText.trim().length > 0) {
                 refs.push({ index: match.index, length: rawText.length, rawText });
-                // 直接傳送帶有語法符號的原字串（ZhConverter 只會翻譯中文字）
                 textsToConvert.push(escapeText(rawText));
             }
         }
 
-        // 如果都不需要轉換，直接回傳原檔
         if (refs.length === 0) return rawContent;
 
-        // 3. 送交轉換器
         const textForConverter = textsToConvert.join('\n');
         const converterOptions = {
             converter: options.converter || 'Taiwan',

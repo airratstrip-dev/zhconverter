@@ -10,7 +10,7 @@ import '@material/web/checkbox/checkbox.js';
 import './components/drop-zone.js';
 import { initializeDynamicTheme, applyCurrentTheme } from './utils/theme.js';
 import { FileReadyEvent, FileReadyDetail } from './events/FileReadyEvent.js';
-import type { TaskPayload, JsonFormatOptions, XmlHtmlFormatOptions, YamlFormatOptions, TomlFormatOptions, FormatOptions } from '../types/global.js';
+import type { TaskPayload, JsonFormatOptions, XmlHtmlFormatOptions, YamlFormatOptions, TomlFormatOptions, AssFormatOptions, FormatOptions } from '../types/global.js';
 import { appStyles } from './app.style.js';
 
 @customElement('zh-converter-app')
@@ -19,7 +19,7 @@ export class ZhConverterApp extends LitElement {
 
     @state() private currentFile: FileReadyDetail | null = null;
     @state() private saveDirectory: string = '';
-    @state() private saveFileName: string = ''; 
+    @state() private saveFileName: string = '';
     @state() private isDarkMode = false;
     @state() private isSubmitting = false;
     @state() private activeFormatPanels = new Set<string>();
@@ -47,6 +47,12 @@ export class ZhConverterApp extends LitElement {
         convertComments: true
     };
 
+    @state() private assOptions: AssFormatOptions = {
+        convertText: true,
+        convertScriptInfo: false,
+        convertComments: true
+    };
+
     public async connectedCallback(): Promise<void> {
         super.connectedCallback();
         this.isDarkMode = await initializeDynamicTheme();
@@ -55,7 +61,7 @@ export class ZhConverterApp extends LitElement {
     private handleFileReady(e: Event): void {
         const event = e as FileReadyEvent;
         if (!event.detail || !event.detail.content) return;
-        
+
         this.currentFile = event.detail;
 
         if (this.currentFile.type === 'file' && this.currentFile.name) {
@@ -76,6 +82,9 @@ export class ZhConverterApp extends LitElement {
             }
             else if (ext === '.toml') {
                 newSet.add('toml');
+            }
+            else if (ext === '.ass' || ext === '.ssa') {
+                newSet.add('ass');
             }
             this.activeFormatPanels = newSet;
         }
@@ -146,6 +155,9 @@ export class ZhConverterApp extends LitElement {
             }
             else if (ext === '.toml') {
                 options = { ...this.tomlOptions };
+            }
+            else if (ext === '.ass' || ext === '.ssa') {
+                options = { ...this.assOptions };
             }
 
             const payload: TaskPayload = {
@@ -328,6 +340,45 @@ export class ZhConverterApp extends LitElement {
                                             <md-checkbox
                                                 ?checked="${this.tomlOptions.convertComments}"
                                                 @change="${(e: Event) => this.tomlOptions = { ...this.tomlOptions, convertComments: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換註解
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="format-panel">
+                            <div class="format-panel-header" @click="${() => this.togglePanel('ass')}">
+                                <div class="format-panel-title">
+                                    <md-icon>subtitles</md-icon>
+                                    ASS / SSA
+                                </div>
+                                <md-icon class="expand-icon ${this.activeFormatPanels.has('ass') ? 'expanded' : ''}">
+                                    expand_more
+                                </md-icon>
+                            </div>
+                            <div class="expandable-panel ${this.activeFormatPanels.has('ass') ? 'expanded' : ''}">
+                                <div class="expandable-content">
+                                    <div class="expandable-content-inner">
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.assOptions.convertText}"
+                                                @change="${(e: Event) => this.assOptions = { ...this.assOptions, convertText: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換字幕內文
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.assOptions.convertScriptInfo}"
+                                                @change="${(e: Event) => this.assOptions = { ...this.assOptions, convertScriptInfo: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換腳本資訊 (標題, 作者...)
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.assOptions.convertComments}"
+                                                @change="${(e: Event) => this.assOptions = { ...this.assOptions, convertComments: (e.target as HTMLInputElement).checked }}"
                                             ></md-checkbox>
                                             轉換註解
                                         </label>

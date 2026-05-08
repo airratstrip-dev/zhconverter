@@ -24,7 +24,18 @@ export interface TomlFormatOptions {
     convertComments: boolean;
 }
 
-export type FormatOptions = JsonFormatOptions | XmlHtmlFormatOptions | YamlFormatOptions | TomlFormatOptions;
+export interface AssFormatOptions {
+    convertText: boolean;
+    convertScriptInfo: boolean;
+    convertComments: boolean;
+}
+
+export type FormatOptions = 
+    | JsonFormatOptions 
+    | XmlHtmlFormatOptions 
+    | YamlFormatOptions 
+    | TomlFormatOptions
+    | AssFormatOptions;
 
 export interface TaskState {
     id: string;

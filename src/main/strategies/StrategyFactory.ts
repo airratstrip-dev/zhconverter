@@ -6,6 +6,7 @@ import { JsonStrategy } from './JsonStrategy.js';
 import { XmlHtmlStrategy } from './XmlHtmlStrategy.js';
 import { YamlStrategy } from './YamlStrategy.js';
 import { TomlStrategy } from './TomlStrategy.js';
+import { AssStrategy } from './AssStrategy.js';
 
 export interface ConverterOptions {
     converter?: string;
@@ -40,6 +41,9 @@ export class StrategyFactory {
             return YamlStrategy;
         case '.toml':
             return TomlStrategy;
+        case '.ass':
+        case '.ssa':
+            return AssStrategy;
         default:
             throw new Error(`目前尚未支援此檔案格式: ${ext}`);
         }

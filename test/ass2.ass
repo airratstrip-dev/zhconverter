@@ -1,0 +1,54 @@
+[Script Info]
+; 这里的注释包含特殊字符：!@#$%^&*()_+{}[]:"|<>?,./'
+Title: 终极压力测试 - 全链路压测版
+ScriptType: v4.00+
+ScaledBorderAndShadow: yes
+PlayResX: 1920
+PlayResY: 1080
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+; 边界情况：极其离谱的数值测试
+Style: Default,Microsoft YaHei,65,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,3,1,2,30,30,30,1
+Style: 超限态,Wingdings,999999,&H7FFFFFFF,&H7FFFFFFF,&H7FFFFFFF,&H7FFFFFFF,1,1,1,1,9999,9999,500,720,1,100,100,5,0,0,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+
+# 1. 极其复杂的动画嵌套与变换 (Nested Transform)
+# \t 标签的嵌套是很多解析器的噩梦，这里测试多重时间轴重叠
+Dialogue: 0,0:00:01.00,0:00:10.00,Default,,0,0,0,,{\an5\t(0,5000,1.5,\fscx200\fscy200\t(1000,4000,\frz360\frx90))\t(2000,3000,\c&H0000FF&)}这种嵌套变换逻辑，你的解析器能对齐吗？
+
+# 2. 畸形的矢量绘图指令 (Malformed Vector Drawings)
+# 包含：不完整的指令、多余的空格、坐标缺失、未切换回文字模式
+Dialogue: 0,0:00:02.00,0:00:05.00,Default,,0,0,0,,{\p1}m 0 0 l 100 100 c 200 200 300 300 400 400 l 500  600  p 2  m 0 0 {\p0}这行后面要是没死机算你赢
+
+# 3. 各种转义字符与 UTF-8 边界
+# 包含：罕见字符、控制字符（模拟）、长串空格
+Dialogue: 0,0:00:05.00,0:00:08.00,Default,,0,0,0,,{\an7}特殊符号：𠜎 𠜱 𠝹 𠱓 \h \h \h \h \h \h \N \n \h 落地生根
+
+# 4. 非法的时间戳格式 (Invalid Timecodes)
+# 包含：多位小时、超过 60 的分钟/秒、带有负号的时间（虽然不规范但真实存在）
+Dialogue: 0,10:75:99.99,11:00:00.00,Default,,0,0,0,,时间溢出测试：经理说项目要赶在“昨天”上线
+Dialogue: 0,-0:01:00.00,0:00:05.00,Default,,0,0,0,,负数时间轴：测试解析器的底层容错性
+
+# 5. 重复定义的标签冲突 (Overlapping Tags)
+# 同一行内出现多个互相矛盾的对齐、颜色或定位标签
+Dialogue: 0,0:00:08.00,0:00:10.00,Default,,0,0,0,,{\an1\an9\pos(100,100)\pos(1800,1000)\c&H000000&\c&HFFFFFF&}反复横跳：测试覆盖逻辑是否闭环
+
+# 6. 极端的卡拉OK标签 (Extreme Karaoke)
+# 包含：0时长、极大时长、以及负数时长的 K 标签
+Dialogue: 0,0:00:10.00,0:00:15.00,Default,,0,0,0,,{\k0}零{\k5000}极{\k10}短{\kf-100}负{\k200}值
+
+# 7. 动态剪裁与淡入淡出联动 (Complex Clipping & Fading)
+# \clip 和 \iclip 在同一个动画序列中
+Dialogue: 0,0:00:15.00,0:00:20.00,Default,,0,0,0,,{\clip(0,0,1920,540)\t(0,2000,\iclip(0,0,1920,540))\fad(1000,1000)}全链路动态剪裁測試
+
+# 8. 无效的层级与覆盖 (Layer & Conflict)
+# Layer 设为负数，或极大的整数
+Dialogue: -1,0:00:15.00,0:00:20.00,Default,,0,0,0,,底层逻辑：我是负数层
+Dialogue: 999999,0:00:15.00,0:00:20.00,Default,,0,0,0,,顶层设计：我是超级高层
+
+# 9. 格式行缺失或乱序 (Field Order & Corruption)
+# 这里模拟由于“格式化错误”导致的逗号缺失或多余
+Dialogue: 0,0:00:20.00,0:00:25.00,Default,MissingName,0,0,0,,Testing,,commas,,,,,,in,,the,,middle

@@ -30,12 +30,22 @@ export interface AssFormatOptions {
     convertComments: boolean;
 }
 
+export interface CsvFormatOptions {
+    convertHeaders: boolean;
+    columnRules: string;
+    isColumnWhitelist: boolean;
+    rowRules: string;
+    isRowWhitelist: boolean;
+    delimiter: string;
+}
+
 export type FormatOptions = 
     | JsonFormatOptions 
     | XmlHtmlFormatOptions 
     | YamlFormatOptions 
     | TomlFormatOptions
-    | AssFormatOptions;
+    | AssFormatOptions
+    | CsvFormatOptions;
 
 export interface TaskState {
     id: string;

@@ -11,7 +11,7 @@ import './components/drop-zone.js';
 import './components/format-panel.js';
 import { initializeDynamicTheme, applyCurrentTheme } from './utils/theme.js';
 import { FileReadyEvent, FileReadyDetail } from './events/FileReadyEvent.js';
-import type { TaskPayload, JsonFormatOptions, XmlHtmlFormatOptions, YamlFormatOptions, TomlFormatOptions, AssFormatOptions, FormatOptions } from '../types/global.js';
+import type { TaskPayload, JsonFormatOptions, XmlHtmlFormatOptions, YamlFormatOptions, TomlFormatOptions, AssFormatOptions, CsvFormatOptions, FormatOptions } from '../types/global.js';
 import { appStyles } from './app.style.js';
 
 @customElement('zh-converter-app')
@@ -54,6 +54,15 @@ export class ZhConverterApp extends LitElement {
         convertComments: true
     };
 
+    @state() private csvOptions: CsvFormatOptions = {
+        convertHeaders: true,
+        columnRules: '',
+        isColumnWhitelist: false,
+        rowRules: '',
+        isRowWhitelist: false,
+        delimiter: ','
+    };
+
     public async connectedCallback(): Promise<void> {
         super.connectedCallback();
         this.isDarkMode = await initializeDynamicTheme();
@@ -72,11 +81,26 @@ export class ZhConverterApp extends LitElement {
             this.saveFileName = `${baseName}-converted${ext}`;
 
             const newSet = new Set(this.activeFormatPanels);
-            if (ext === '.json' || ext === '.jsonl') newSet.add('json');
-            else if (['.xml', '.html', '.htm', '.xhtml'].includes(ext)) newSet.add('xmlhtml');
-            else if (ext === '.yaml' || ext === '.yml') newSet.add('yaml');
-            else if (ext === '.toml') newSet.add('toml');
-            else if (ext === '.ass' || ext === '.ssa') newSet.add('ass');
+            if (ext === '.json' || ext === '.jsonl') {
+                newSet.add('json');
+            }
+            else if (['.xml', '.html', '.htm', '.xhtml'].includes(ext)) {
+                newSet.add('xmlhtml');
+            }
+            else if (ext === '.yaml' || ext === '.yml') {
+                newSet.add('yaml');
+            }
+            else if (ext === '.toml') {
+                newSet.add('toml');
+            }
+            else if (ext === '.ass' || ext === '.ssa') {
+                newSet.add('ass');
+            }
+            else if (ext === '.csv' || ext === '.tsv') {
+                newSet.add('csv');
+                this.csvOptions = { ...this.csvOptions, delimiter: ext === '.tsv' ? '\t' : ',' };
+            }
+            
             this.activeFormatPanels = newSet;
         }
         else {
@@ -238,6 +262,47 @@ export class ZhConverterApp extends LitElement {
                                 轉換註解
                             </label>
                         </format-panel>
+
+                        <format-panel icon="table_chart" label="CSV / TSV" ?expanded="${this.activeFormatPanels.has('csv')}" @toggle="${() => this.togglePanel('csv')}">
+                            <md-filled-text-field 
+                                label="分隔符號 (輸入 \\t 代表 Tab)" 
+                                value="${this.csvOptions.delimiter === '\t' ? '\\t' : this.csvOptions.delimiter}" 
+                                @input="${(e: Event) => {
+        const val = (e.target as HTMLInputElement).value;
+        this.csvOptions = { ...this.csvOptions, delimiter: val === '\\t' ? '\t' : val };
+    }}">
+                            </md-filled-text-field>
+
+                            <label class="checkbox-label">
+                                <md-checkbox ?checked="${this.csvOptions.convertHeaders}" @change="${(e: Event) => this.csvOptions = { ...this.csvOptions, convertHeaders: (e.target as HTMLInputElement).checked }}"></md-checkbox>
+                                轉換標頭 (第一行)
+                            </label>
+
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <md-filled-text-field 
+                                    label="${this.csvOptions.isColumnWhitelist ? '包含' : '排除'}的 Column 規則 (逗號分隔)"
+                                    value="${this.csvOptions.columnRules}"
+                                    @input="${(e: Event) => this.csvOptions = { ...this.csvOptions, columnRules: (e.target as HTMLInputElement).value }}">
+                                </md-filled-text-field>
+                                <label class="checkbox-label">
+                                    <md-checkbox ?checked="${this.csvOptions.isColumnWhitelist}" @change="${(e: Event) => this.csvOptions = { ...this.csvOptions, isColumnWhitelist: (e.target as HTMLInputElement).checked }}"></md-checkbox>
+                                    作為白名單
+                                </label>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <md-filled-text-field 
+                                    label="${this.csvOptions.isRowWhitelist ? '包含' : '排除'}的 Row 規則 (逗號分隔)"
+                                    value="${this.csvOptions.rowRules}"
+                                    @input="${(e: Event) => this.csvOptions = { ...this.csvOptions, rowRules: (e.target as HTMLInputElement).value }}">
+                                </md-filled-text-field>
+                                <label class="checkbox-label">
+                                    <md-checkbox ?checked="${this.csvOptions.isRowWhitelist}" @change="${(e: Event) => this.csvOptions = { ...this.csvOptions, isRowWhitelist: (e.target as HTMLInputElement).checked }}"></md-checkbox>
+                                    作為白名單
+                                </label>
+                            </div>
+                        </format-panel>
+
                     </div>
                 </div>
                 <div class="sidebar-footer">

@@ -26,7 +26,7 @@ md-filled-text-field {
 }
 
 .sidebar {
-    width: 260px;
+    width: 300px;
     background-color: var(--md-sys-color-surface-container-low);
     border-right: 1px solid var(--md-sys-color-outline-variant);
     display: flex;
@@ -62,6 +62,11 @@ md-filled-text-field {
     flex-direction: column;
     gap: 8px;
     overflow-y: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .sidebar-title {

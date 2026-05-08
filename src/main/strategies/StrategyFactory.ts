@@ -7,6 +7,7 @@ import { XmlHtmlStrategy } from './XmlHtmlStrategy.js';
 import { YamlStrategy } from './YamlStrategy.js';
 import { TomlStrategy } from './TomlStrategy.js';
 import { AssStrategy } from './AssStrategy.js';
+import { CsvStrategy } from './CsvStrategy.js';
 
 export interface ConverterOptions {
     converter?: string;
@@ -44,6 +45,9 @@ export class StrategyFactory {
         case '.ass':
         case '.ssa':
             return AssStrategy;
+        case '.csv':
+        case '.tsv':
+            return CsvStrategy;
         default:
             throw new Error(`目前尚未支援此檔案格式: ${ext}`);
         }

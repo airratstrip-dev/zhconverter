@@ -18,6 +18,8 @@
         "@material/material-color-utilities": "^0.4.0",
         "@material/web": "^2.4.1",
         "cheerio": "^1.2.0",
+        "csv-parse": "^6.2.1",
+        "csv-stringify": "^6.7.0",
         "lit": "^3.3.2",
         "material-symbols": "^0.44.4",
         "yaml": "^2.8.4"

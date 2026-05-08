@@ -18,7 +18,13 @@ export interface YamlFormatOptions {
     convertComments: boolean;
 }
 
-export type FormatOptions = JsonFormatOptions | XmlHtmlFormatOptions | YamlFormatOptions;
+export interface TomlFormatOptions {
+    convertKeys: boolean;
+    convertValues: boolean;
+    convertComments: boolean;
+}
+
+export type FormatOptions = JsonFormatOptions | XmlHtmlFormatOptions | YamlFormatOptions | TomlFormatOptions;
 
 export interface TaskState {
     id: string;

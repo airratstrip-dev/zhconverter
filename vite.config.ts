@@ -22,7 +22,7 @@ export default defineConfig({
                     build: {
                         outDir: 'dist-electron/main',
                         rollupOptions: {
-                            external: ['cheerio', 'yaml']
+                            external: ['cheerio', 'yaml', '@iarna/toml']
                         }
                     }
                 }

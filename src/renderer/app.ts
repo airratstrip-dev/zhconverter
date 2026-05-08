@@ -10,7 +10,7 @@ import '@material/web/checkbox/checkbox.js';
 import './components/drop-zone.js';
 import { initializeDynamicTheme, applyCurrentTheme } from './utils/theme.js';
 import { FileReadyEvent, FileReadyDetail } from './events/FileReadyEvent.js';
-import type { TaskPayload, JsonFormatOptions, XmlHtmlFormatOptions, YamlFormatOptions, FormatOptions } from '../types/global.js';
+import type { TaskPayload, JsonFormatOptions, XmlHtmlFormatOptions, YamlFormatOptions, TomlFormatOptions, FormatOptions } from '../types/global.js';
 import { appStyles } from './app.style.js';
 
 @customElement('zh-converter-app')
@@ -36,6 +36,12 @@ export class ZhConverterApp extends LitElement {
     };
 
     @state() private yamlOptions: YamlFormatOptions = {
+        convertKeys: false,
+        convertValues: true,
+        convertComments: true
+    };
+
+    @state() private tomlOptions: TomlFormatOptions = {
         convertKeys: false,
         convertValues: true,
         convertComments: true
@@ -67,6 +73,9 @@ export class ZhConverterApp extends LitElement {
             }
             else if (ext === '.yaml' || ext === '.yml') {
                 newSet.add('yaml');
+            }
+            else if (ext === '.toml') {
+                newSet.add('toml');
             }
             this.activeFormatPanels = newSet;
         }
@@ -134,6 +143,9 @@ export class ZhConverterApp extends LitElement {
             }
             else if (ext === '.yaml' || ext === '.yml') {
                 options = { ...this.yamlOptions };
+            }
+            else if (ext === '.toml') {
+                options = { ...this.tomlOptions };
             }
 
             const payload: TaskPayload = {
@@ -232,14 +244,14 @@ export class ZhConverterApp extends LitElement {
                                                 ?checked="${this.xmlHtmlOptions.convertAttributes}"
                                                 @change="${(e: Event) => this.xmlHtmlOptions = { ...this.xmlHtmlOptions, convertAttributes: (e.target as HTMLInputElement).checked }}"
                                             ></md-checkbox>
-                                            轉換標籤屬性 (alt, title...)
+                                            轉換標籤屬性
                                         </label>
                                         <label class="checkbox-label">
                                             <md-checkbox
                                                 ?checked="${this.xmlHtmlOptions.convertComments}"
                                                 @change="${(e: Event) => this.xmlHtmlOptions = { ...this.xmlHtmlOptions, convertComments: (e.target as HTMLInputElement).checked }}"
                                             ></md-checkbox>
-                                            轉換註解 (&lt;!-- ... --&gt;)
+                                            轉換註解
                                         </label>
                                     </div>
                                 </div>
@@ -278,7 +290,46 @@ export class ZhConverterApp extends LitElement {
                                                 ?checked="${this.yamlOptions.convertComments}"
                                                 @change="${(e: Event) => this.yamlOptions = { ...this.yamlOptions, convertComments: (e.target as HTMLInputElement).checked }}"
                                             ></md-checkbox>
-                                            轉換註解 (# ...)
+                                            轉換註解
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="format-panel">
+                            <div class="format-panel-header" @click="${() => this.togglePanel('toml')}">
+                                <div class="format-panel-title">
+                                    <md-icon>reorder</md-icon>
+                                    TOML
+                                </div>
+                                <md-icon class="expand-icon ${this.activeFormatPanels.has('toml') ? 'expanded' : ''}">
+                                    expand_more
+                                </md-icon>
+                            </div>
+                            <div class="expandable-panel ${this.activeFormatPanels.has('toml') ? 'expanded' : ''}">
+                                <div class="expandable-content">
+                                    <div class="expandable-content-inner">
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.tomlOptions.convertKeys}"
+                                                @change="${(e: Event) => this.tomlOptions = { ...this.tomlOptions, convertKeys: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換鍵名 (Keys)
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.tomlOptions.convertValues}"
+                                                @change="${(e: Event) => this.tomlOptions = { ...this.tomlOptions, convertValues: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換數值 (Values)
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <md-checkbox
+                                                ?checked="${this.tomlOptions.convertComments}"
+                                                @change="${(e: Event) => this.tomlOptions = { ...this.tomlOptions, convertComments: (e.target as HTMLInputElement).checked }}"
+                                            ></md-checkbox>
+                                            轉換註解
                                         </label>
                                     </div>
                                 </div>

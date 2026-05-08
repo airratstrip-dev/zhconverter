@@ -14,6 +14,7 @@
         "lint:fix": "eslint . --fix"
     },
     "dependencies": {
+        "@iarna/toml": "^2.2.5",
         "@material/material-color-utilities": "^0.4.0",
         "@material/web": "^2.4.1",
         "cheerio": "^1.2.0",

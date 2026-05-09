@@ -1,6 +1,6 @@
 {
     "name": "zhconverter",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Universal Chinese Converter built with Electron",
     "license": "MIT",
     "author": "Airratstrip",

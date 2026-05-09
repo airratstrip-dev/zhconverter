@@ -155,6 +155,7 @@ export class ZhConverterApp extends LitElement {
             else if (ext === '.yaml' || ext === '.yml') options = { ...this.yamlOptions };
             else if (ext === '.toml') options = { ...this.tomlOptions };
             else if (ext === '.ass' || ext === '.ssa') options = { ...this.assOptions };
+            else if (ext === '.csv' || ext === '.tsv') options = { ...this.csvOptions };
 
             const payload: TaskPayload = {
                 type: this.currentFile.type,

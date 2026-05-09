@@ -55,7 +55,7 @@ export class QueueManager {
         let tempFilePath = '';
 
         try {
-            let resultText = '';
+            let resultData: string | Buffer = '';
             
             const strategyOptions = {
                 converter: 'Taiwan',
@@ -64,7 +64,7 @@ export class QueueManager {
 
             if (pendingTask.type === 'file') {
                 const Strategy = StrategyFactory.getStrategy(pendingTask.sourcePathOrContent);
-                resultText = await Strategy.execute(
+                resultData = await Strategy.execute(
                     pendingTask.sourcePathOrContent, 
                     strategyOptions, 
                     (progress) => this.updateTaskProgress(pendingTask.id, progress.current / progress.total)
@@ -75,7 +75,7 @@ export class QueueManager {
                 tempFilePath = path.join(os.tmpdir(), `zh_converter_paste_${timestamp}.txt`);
                 await fs.writeFile(tempFilePath, pendingTask.sourcePathOrContent, 'utf-8');
                 
-                resultText = await TxtStrategy.execute(
+                resultData = await TxtStrategy.execute(
                     tempFilePath,
                     strategyOptions, 
                     (progress) => this.updateTaskProgress(pendingTask.id, progress.current / progress.total)
@@ -83,7 +83,14 @@ export class QueueManager {
             }
 
             const finalPath = await this.resolveSavePath(pendingTask.saveDir, pendingTask.saveName);
-            await fs.writeFile(finalPath, resultText, 'utf-8');
+            
+            // ★ 動態判斷回傳值型別，決定以二進位或 UTF-8 寫入硬碟
+            if (Buffer.isBuffer(resultData)) {
+                await fs.writeFile(finalPath, resultData);
+            } 
+            else {
+                await fs.writeFile(finalPath, resultData, 'utf-8');
+            }
 
             pendingTask.status = 'completed';
             pendingTask.progress = 1;

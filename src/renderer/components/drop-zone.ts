@@ -103,7 +103,7 @@ export class DropZone extends LitElement {
             <md-elevation></md-elevation>
             <md-icon>upload_file</md-icon>
             <h2>拖曳檔案至此，或按 Ctrl+V 貼上文字</h2>
-            <p>支援 .txt, .md, .srt, .json, .jsonl, .xml, .html, .yaml, .toml, .ass, .csv, .tsv, .epub</p>
+            <p>支援 .txt, .epub, .docx, .json, .jsonl, .md, .srt, .xml, .html, .yaml, .toml, .ass, .csv, .tsv </p>
         `;
     }
 }

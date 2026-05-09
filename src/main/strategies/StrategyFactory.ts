@@ -9,6 +9,7 @@ import { TomlStrategy } from './TomlStrategy.js';
 import { AssStrategy } from './AssStrategy.js';
 import { CsvStrategy } from './CsvStrategy.js';
 import { EpubStrategy } from './EpubStrategy.js';
+import { DocxStrategy } from './DocxStrategy.js';
 
 export interface ConverterOptions {
     converter?: string;
@@ -51,6 +52,8 @@ export class StrategyFactory {
             return CsvStrategy;
         case '.epub':
             return EpubStrategy;
+        case '.docx':
+            return DocxStrategy;
         default:
             throw new Error(`目前尚未支援此檔案格式: ${ext}`);
         }

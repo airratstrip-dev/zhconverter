@@ -8,6 +8,7 @@ import { YamlStrategy } from './YamlStrategy.js';
 import { TomlStrategy } from './TomlStrategy.js';
 import { AssStrategy } from './AssStrategy.js';
 import { CsvStrategy } from './CsvStrategy.js';
+import { EpubStrategy } from './EpubStrategy.js';
 
 export interface ConverterOptions {
     converter?: string;
@@ -48,6 +49,8 @@ export class StrategyFactory {
         case '.csv':
         case '.tsv':
             return CsvStrategy;
+        case '.epub':
+            return EpubStrategy;
         default:
             throw new Error(`目前尚未支援此檔案格式: ${ext}`);
         }
